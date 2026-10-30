@@ -55,3 +55,8 @@ td.t{font-family:var(--mono)}
 .chip.on{color:var(--ok);border-color:#255c44;background:#10261c}
 .chip.ontime.on{color:var(--accent);border-color:#274a63;background:#0f1f2b}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
+
+.banner{border:1px solid #5c4a25;background:#2a2418;color:#f0d79a;border-radius:10px;
+  padding:10px 12px;margin-bottom:14px;font-size:12.5px;line-height:1.5}
+.banner code{background:#0b0e13;border:1px solid var(--line);border-radius:5px;padding:1px 5px;
+  font-family:var(--mono);font-size:11.5px;color:var(--fg)}

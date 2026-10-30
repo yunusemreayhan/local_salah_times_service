@@ -38,6 +38,23 @@ STATIC = HERE / 'static'
 DEFAULT_PORT = 8381
 MAX_BODY = 64 * 1024
 NOTIFIER_UNIT = 'salah-times-notifier.service'
+LEGACY_UNIT = 'quran-tools-namaz.service'      # pre-extraction system unit
+
+
+def legacy_notifier() -> dict:
+    """The old system-wide notifier still delivers the same reminders.
+
+    Running both means every reminder fires twice, which reads like "the times
+    moved". Detect it and tell the user once instead of silently doubling.
+    """
+    try:
+        res = subprocess.run(['systemctl', 'is-active', LEGACY_UNIT],
+                             capture_output=True, text=True, timeout=3)
+        state = (res.stdout or '').strip() or 'unknown'
+        return {'unit': LEGACY_UNIT, 'active': state,
+                'duplicate': state == 'active'}
+    except Exception:                                  # noqa: BLE001
+        return {'unit': LEGACY_UNIT, 'active': 'unknown', 'duplicate': False}
 
 
 def service_state(unit: str) -> dict:
@@ -125,6 +142,7 @@ class Handler(BaseHTTPRequestHandler):
                 'methods': sorted(st.METHODS),
                 'voice_engines': list(st.VOICE_ENGINES),
                 'service': service_state(NOTIFIER_UNIT),
+                'legacy_notifier': legacy_notifier(),
                 'timezone_detected': st.default_tz_name(),
             })
 
@@ -161,6 +179,7 @@ class Handler(BaseHTTPRequestHandler):
                           'lang': cfg.get('voice_lang'),
                           'name': cfg.get('voice_name')},
                 'service': service_state(NOTIFIER_UNIT),
+                'legacy_notifier': legacy_notifier(),
             })
 
         if path == '/api/month':

@@ -9,6 +9,7 @@ const PRAYER_KEYS = ['imsak', 'gunes', 'ogle', 'ikindi', 'aksam', 'yatsi'];
 let CFG = null;
 let TIMES = null;
 let NOTIFY = {};
+let DIRTY = false;   // unsaved reminder edits
 let TARGET = null;   // epoch ms of the next prayer
 
 function clone(o) { return JSON.parse(JSON.stringify(o)); }
@@ -51,11 +52,20 @@ async function load() {
   $('#voice-on').checked = !!(t.voice && t.voice.on);
 
   renderTimes();
-  renderReminders();
+  if (!DIRTY) { NOTIFY = clone(CFG.notify || {}); renderReminders(); }
   renderSchedule();
   loadMonth();
   loadVoices();
   startCountdown();
+
+  const legacy = c.legacy_notifier || {};
+  if (legacy.duplicate) {
+    $('#dup-banner').classList.remove('hidden');
+    $('#dup-banner').innerHTML = `⚠ the old <code>${esc(legacy.unit)}</code> is still running, ` +
+      `so every reminder fires twice. Disable it:<br><code>sudo systemctl disable --now ${esc(legacy.unit)}</code>`;
+  } else {
+    $('#dup-banner').classList.add('hidden');
+  }
 
   const svc = t.service || {};
   $('#meta').innerHTML = [
@@ -96,10 +106,10 @@ function renderReminders() {
   body.innerHTML = PRAYER_KEYS.map(key => {
     const items = NOTIFY[key] || [];
     const ontime = items.find(i => i.when === 'ontime' && i.on);
-    const chips = [`<span class="chip ontime ${ontime ? 'on' : ''}" data-key="${key}" data-when="ontime" data-min="0">on time</span>`];
+    const chips = [`<span class="chip ontime ${ontime ? 'on' : ''}" data-key="${key}" data-when="ontime" data-min="0" title="${ontime ? 'remove' : 'add'} on-time reminder">on time</span>`];
     for (const m of PRESETS) {
       const it = items.find(i => i.when === 'before' && Number(i.minutes) === m);
-      chips.push(`<span class="chip ${it && it.on ? 'on' : ''}" data-key="${key}" data-when="before" data-min="${m}">−${m}</span>`);
+      chips.push(`<span class="chip ${it && it.on ? 'on' : ''}" data-key="${key}" data-when="before" data-min="${m}" title="${it && it.on ? 'remove' : 'add'} ${m}-minute reminder">−${m}</span>`);
     }
     const custom = items.filter(i => i.when === 'before' && !PRESETS.includes(Number(i.minutes)));
     for (const c of custom) {
@@ -164,7 +174,22 @@ function toggleReminder(key, when, minutes) {
   const idx = items.findIndex(i => i.when === when && Number(i.minutes) === Number(minutes));
   if (idx >= 0) items[idx].on = !items[idx].on;
   else items.push({ on: true, when, minutes: Number(minutes) });
+  markDirty();
   renderReminders();
+}
+
+function markDirty() {
+  DIRTY = true;
+  $('#notify-msg').textContent = 'unsaved changes';
+  $('#notify-msg').className = 'chip warn';
+  $('#discard-notify').classList.remove('hidden');
+}
+
+function clearDirty() {
+  DIRTY = false;
+  $('#notify-msg').textContent = '';
+  $('#notify-msg').className = 'muted';
+  $('#discard-notify').classList.add('hidden');
 }
 
 document.addEventListener('click', async (ev) => {
@@ -183,7 +208,15 @@ document.addEventListener('click', async (ev) => {
   }
   if (ev.target.id === 'save-notify') {
     await saveConfig({ notify: NOTIFY });
+    clearDirty();
     $('#notify-msg').textContent = 'saved — the notifier picks it up within a minute';
+    $('#notify-msg').className = 'muted';
+    return;
+  }
+  if (ev.target.id === 'discard-notify') {
+    NOTIFY = clone((CFG && CFG.notify) || {});
+    clearDirty();
+    renderReminders();
     return;
   }
   if (ev.target.id === 'test') {

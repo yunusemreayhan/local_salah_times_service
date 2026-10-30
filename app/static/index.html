@@ -20,6 +20,7 @@
 </header>
 
 <main>
+  <div id="dup-banner" class="banner hidden"></div>
   <section id="setup" class="setup hidden">
     <h2>Set your location</h2>
     <div class="grid3">
@@ -55,7 +56,8 @@
     </div>
     <div class="row">
       <button class="primary" id="save-notify">save reminders</button>
-      <span class="muted" id="notify-msg"></span>
+      <button id="discard-notify" class="hidden">discard</button>
+      <span id="notify-msg" class="muted"></span>
     </div>
   </section>
 
