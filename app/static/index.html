@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Salah Times</title>
+<link rel="icon" href="/static/favicon.svg">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header>
+  <div class="brand"><span class="dot" id="dot"></span><strong>Salah Times</strong>
+    <span class="muted" id="sub">…</span></div>
+  <div class="next" id="next"></div>
+  <div class="controls">
+    <label class="voicetog"><input type="checkbox" id="voice-on"> voice</label>
+    <button id="test">test notify</button>
+    <button id="reload" title="reload">↻</button>
+  </div>
+</header>
+
+<main>
+  <section id="setup" class="setup hidden">
+    <h2>Set your location</h2>
+    <div class="grid3">
+      <label>Name <input id="loc-name" placeholder="İSTANBUL"></label>
+      <label>Latitude <input id="loc-lat" type="number" step="0.0001" placeholder="41.01"></label>
+      <label>Longitude <input id="loc-lon" type="number" step="0.0001" placeholder="28.965"></label>
+      <label>Country <input id="loc-cc" placeholder="TR" maxlength="4"></label>
+      <label>Timezone <input id="loc-tz" placeholder="Europe/Istanbul"></label>
+      <label>Method
+        <select id="method">
+          <option value="diyanet">diyanet (Turkey)</option>
+          <option value="mwl">mwl (Muslim World League)</option>
+          <option value="isna">isna</option>
+          <option value="hanafi">hanafi</option>
+        </select>
+      </label>
+    </div>
+    <button class="primary" id="save-loc">save location</button>
+  </section>
+
+  <section id="times-wrap" class="hidden">
+    <div class="times" id="times"></div>
+    <div class="meta" id="meta"></div>
+  </section>
+
+  <section id="reminders-wrap" class="hidden">
+    <h2>Reminders</h2>
+    <div class="tablewrap">
+      <table id="reminders">
+        <thead><tr><th>prayer</th><th>on time</th><th>before</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="row">
+      <button class="primary" id="save-notify">save reminders</button>
+      <span class="muted" id="notify-msg"></span>
+    </div>
+  </section>
+
+  <section id="schedule-wrap" class="hidden">
+    <h2>Upcoming</h2>
+    <div class="tablewrap"><table id="schedule">
+      <thead><tr><th>fires</th><th>prayer</th><th>kind</th><th>message</th></tr></thead>
+      <tbody></tbody></table></div>
+  </section>
+
+  <section id="month-wrap" class="hidden">
+    <h2>This month</h2>
+    <div class="tablewrap"><table id="month"><thead><tr></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section id="voices-wrap" class="hidden">
+    <h2>Voices on this machine</h2>
+    <div class="tablewrap"><table id="voices"><thead><tr><th>engine</th><th>lang</th><th>name</th></tr></thead><tbody></tbody></table></div>
+  </section>
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

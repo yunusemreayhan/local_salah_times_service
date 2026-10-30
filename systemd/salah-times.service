@@ -1,0 +1,15 @@
+[Unit]
+Description=salah-times web service (prayer times, qibla, reminders) on 127.0.0.1:8381
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/repos/local_salah_times_service/app
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 %h/repos/local_salah_times_service/app/server.py --port 8381
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

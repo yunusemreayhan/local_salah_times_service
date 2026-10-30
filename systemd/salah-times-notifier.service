@@ -1,0 +1,15 @@
+[Unit]
+Description=salah-times notifier (desktop notification + optional voice)
+After=default.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/repos/local_salah_times_service
+Environment=PYTHONUNBUFFERED=1
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=%t/bus
+ExecStart=/usr/bin/python3 %h/repos/local_salah_times_service/daemon.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

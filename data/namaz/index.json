@@ -1,0 +1,27 @@
+{
+  "generated_from": "Risale-i Nur Okuma Programı (com.yukselis.okuma) v8.8.5",
+  "records": 8528,
+  "countries": 210,
+  "file_nodes": 370,
+  "leaves": 8528,
+  "max_depth": 2,
+  "missing_leaf_count": 16,
+  "missing_leaf_sample": [
+    27097,
+    14905,
+    15056,
+    15480,
+    15484,
+    15487,
+    15490,
+    15491,
+    15516,
+    16136,
+    33291,
+    16323,
+    16325,
+    16395,
+    18940,
+    16520
+  ]
+}
